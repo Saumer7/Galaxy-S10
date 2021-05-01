@@ -274,11 +274,12 @@ static int sugov_select_scaling_cpu(void)
 	/* Idle core of the boot cluster is selected to scaling cpu */
 	for_each_cpu(cpu, &mask) {
 		rt = sched_get_rt_rq_util(cpu);
-#ifdef CONFIG_SCHED_EMS
-		util = ml_boosted_cpu_util(cpu) + rt;
-#else
+
+// #ifdef CONFIG_SCHED_EMS
+//		util = ml_boosted_cpu_util(cpu) + rt;
+// #else
 		util = boosted_cpu_util(cpu, rt);
-#endif
+// #endif
 		if (util < min) {
 			min = util;
 			candidate = cpu;
@@ -372,7 +373,8 @@ static unsigned int get_next_freq(struct sugov_policy *sg_policy,
 	RV_DECLARE(rv);
 #endif
 
-	freq = (freq + (freq >> 2)) * util / max;
+	// freq = (freq + (freq >> 2)) * util / max;
+	freq = freq * util / max;
 
 #ifdef CONFIG_SCHED_KAIR_GLUE
 	legacy_freq = freq;
@@ -446,6 +448,7 @@ static void sugov_get_util(unsigned long *util, unsigned long *max, int cpu)
 	*util = boosted_cpu_util(cpu, rt);
 #endif
 	*util = freqvar_boost_vector(cpu, *util);
+	*util = *util + (*util >> 2);
 	*util = min(*util, max_cap);
 	*max = max_cap;
 
