@@ -10629,7 +10629,7 @@
 				};
 
 				gpu-switch-on {
-					temperature = <0x130b0>;
+					temperature = <0x7d00>;
 					hysteresis = <0x7d0>;
 					type = "active";
 					linux,phandle = <0x2e3>;
@@ -10637,7 +10637,7 @@
 				};
 
 				gpu-control-temp {
-					temperature = <0x157c0>;
+					temperature = <0x8ca0>;
 					hysteresis = <0x1388>;
 					type = "passive";
 					linux,phandle = <0x11d>;
@@ -10645,7 +10645,7 @@
 				};
 
 				gpu-alert0 {
-					temperature = <0x19a28>;
+					temperature = <0x9c40>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x2e4>;
@@ -10653,7 +10653,7 @@
 				};
 
 				gpu-alert1 {
-					temperature = <0x1adb0>;
+					temperature = <0xabe0>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x2e5>;
@@ -10661,7 +10661,7 @@
 				};
 
 				gpu-alert2 {
-					temperature = <0x1c138>;
+					temperature = <0xbb80>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x2e6>;
@@ -10669,7 +10669,7 @@
 				};
 
 				gpu-alert3 {
-					temperature = <0x1c138>;
+					temperature = <0xcb20>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x2e7>;
@@ -10677,7 +10677,7 @@
 				};
 
 				gpu-hot {
-					temperature = <0x1c138>;
+					temperature = <0xdac0>;
 					hysteresis = <0x1388>;
 					type = "hot";
 					linux,phandle = <0x2e8>;
