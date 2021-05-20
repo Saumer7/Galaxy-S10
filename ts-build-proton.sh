@@ -41,7 +41,7 @@ MAIN()
     elif [ $MODEL = "G970N" ]; then
     ./build mkimg model=G970N name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton +dtb
     elif [ $MODEL = "G973F" ]; then
-    ./build mkimg model=G973F name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton +dtb
+    ./build mkimg model=G973F name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton210213 +dtb
     elif [ $MODEL = "G973N" ]; then
     ./build-aosp mkimg model=G973N name="$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION" toolchain=proton +dtb
     elif [ $MODEL = "G975F" ]; then
