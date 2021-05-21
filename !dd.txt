@@ -1,4 +1,4 @@
-aosp build on github..
+aosp build on github.. 
 
 build-aosp : add proton210213 toolchain
 ts-build-[toolchain].sh : edited for aosp
