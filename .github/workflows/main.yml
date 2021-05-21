@@ -24,7 +24,7 @@ jobs:
         rm -fr toolchain
         git add .
         mkdir toolchain
-        git submodule add --branch proton210213 https://github.com/Saumer7/proton-clang toolchain/proton
+        git submodule add --branch proton https://github.com/Saumer7/proton-clang toolchain/proton
     - name: Kernel Build
       run: echo 3 | ./ts-build-proton.sh
     - name: Upload Kernel Zip
