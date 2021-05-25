@@ -1,0 +1,80 @@
+aosp build on github..
+
+build-aosp : add proton210213 toolchain
+ts-build-[toolchain].sh : edited for aosp
+
+drivers/media/platform/exynos/fimc-is2/
+/include/fimc-is-metadata.h
+/fimc-is-v7_0_0/fimc-is-subdev-mcsp.c
+/sensor/module_framework/fimc-is-interface-sensor.c
+ : are replaced to cruel v3.10's to camerafix
+
+
+kernel/power/qos.c
+ : delete /* dont let userspace impose restrictions on CPU idle levels */ and below.
+   to make kernel uperf compatiable.
+
+
+
+dts - thermal (temp)
+arch/arm64/boot/dts/exynos/exynos9820.dts
+edit some temp to higher;
+
+cruel4.2 :	big-cold = 20 (000, line 10335)
+	big-switch-on = 55
+	big-control-temp = 83
+	big-alert0 = 95
+	big-alert1 = 100
+	big-alert2 = 105
+	big-alert3 = 110
+	big-hot = 115
+	mid-cold = 20
+	mid-switch-on = 55
+	mid-control-temp = 83
+	mid-alert0 = 95
+	mid-alert1 = 100
+	mid-alert2 = 105
+	mid-alert3 = 110
+	mid-hot = 115
+	little-alert0 = 20
+	little-alert1 = 76
+	little-alert2 = 81
+	little-alert3 = 86
+	little-alert4 = 91
+	little-alert5 = 96
+	little-alert6 = 101
+	little-hot = 115
+	gpu-cold = 20
+	gpu-switch-on = 78
+	gpu-control-temp = 88
+	gpu-alert0 = 105
+	gpu-alert1 = 110
+	gpu-alert2 = 115
+	gpu-alert3 = 115
+	gpu-hot = 115
+
+
+placebo :
+
+drivers/gpu/arm/b_r26p0/platform/exynos/gpu_custom_interface.c
+ : allow gpu undervolt to 0
+
+
+NOT placebo :
+
+drivers/cpufreq/exynos-acme.c
+ : cpu_undervolt = 200000 (default 25000)
+  too high value makes lower cpu performance.
+
+
+
+
+palcebo? :
+
+arch/arm64/boot/dts/exynos/exynos9820.dts (line 5200)
+ : gpu_default_voltage = 0x89544 (=562500,
+default 0xa1be4=662500 in TTweaks, 0xc3500=800000 in dts)
+
+arch/arm64/boot/dts/exynos/exynos9820.dts
+ : gpu_temp_throttling = 0xab630 0xab630 0x9eb10 0x8ba60 0x8ba60 0x8ba60
+   (=702000 702000 650000 650000 572000 572000, default 572~200)
