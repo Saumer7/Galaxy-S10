@@ -636,11 +636,6 @@ next:
 
 	if (!try_merge_bio_encrypted(io->bio, dun, fscrypt_get_bio_cryptd(inode), enc))
 		__submit_merged_bio(io);
-#ifdef CONFIG_DDAR
-	/* DDAR support */
-	if (!fscrypt_dd_can_merge_bio(io->bio, fio->page->mapping))
-		__submit_merged_bio(io);
-#endif
 
 alloc_new:
 	if (io->bio == NULL) {
