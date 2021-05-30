@@ -38,10 +38,6 @@ obj-$(CONFIG_INTEGRITY)			+= integrity/
 # MST driver
 obj-$(CONFIG_MST_LDO)	  += mstdrv/
 
-# Knox SDP
-obj-$(CONFIG_SDP) += sdp/
-obj-$(CONFIG_SDP) += sdp/built-in.o
-
 # FIVE
 subdir-$(CONFIG_FIVE)			+= samsung/five
 obj-$(CONFIG_FIVE)			+= samsung/five/
