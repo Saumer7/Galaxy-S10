@@ -9882,7 +9882,7 @@
 			sibling-cpus = "0-3";
 			cal-id = <0xb040002>;
 			dm-type = <0x0>;
-			max-freq = <0x1dc130>;
+			max-freq = <0x202290>;
 			min-freq = <0x1fbd0>;
 			pm_qos-min-class = <0x3>;
 			pm_qos-max-class = <0x4>;
@@ -10503,7 +10503,7 @@
 				};
 
 				little-alert1 {
-					temperature = <0x128e0>;
+					temperature = <0x16378>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x115>;
@@ -10511,7 +10511,7 @@
 				};
 
 				little-alert2 {
-					temperature = <0x13c68>;
+					temperature = <0x16378>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x116>;
@@ -10519,7 +10519,7 @@
 				};
 
 				little-alert3 {
-					temperature = <0x14ff0>;
+					temperature = <0x16378>;
 					hysteresis = <0x1388>;
 					type = "active";
 					linux,phandle = <0x117>;
