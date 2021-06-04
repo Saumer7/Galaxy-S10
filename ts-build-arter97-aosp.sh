@@ -34,8 +34,8 @@ MAIN()
 (
 	START_TIME=`date +%T`
 
-    ## COPY CAMERA FILES FOR AOSP - GCAM modded app
-	cp -rf /home/nalas/kernel/AiO-S10-TS/builds/camera-aosp/. /home/nalas/kernel/AiO-S10-TS/drivers/media/platform/exynos/fimc-is2
+#    ## COPY CAMERA FILES FOR AOSP - GCAM modded app
+#	cp -rf /home/nalas/kernel/AiO-S10-TS/builds/camera-aosp/. /home/nalas/kernel/AiO-S10-TS/drivers/media/platform/exynos/fimc-is2
 
 
     if [ $MODEL = "G970F" ]; then
@@ -189,12 +189,12 @@ elif [ $prompt = "2" ]; then
     RUN_PROGRAM
     BUILD_FLASHABLES
 elif [ $prompt = "3" ]; then
-    MODEL=G973F
-    ZIP_DATE=`date +%Y%m%d`
-    ZIP_NAME=$K_NAME-$MODEL-$K_VERSION-ARTER97-$ZIP_DATE.zip
-    export KERNEL_VERSION="$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION"
-    echo "SM-G973F Selected"
-    RUN_PROGRAM
+#    MODEL=G973F
+#    ZIP_DATE=`date +%Y%m%d`
+#    ZIP_NAME=$K_NAME-$MODEL-$K_VERSION-ARTER97-$ZIP_DATE.zip
+#    export KERNEL_VERSION="$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION"
+#    echo "SM-G973F Selected"
+#    RUN_PROGRAM
     MODEL=G973N
     ZIP_DATE=`date +%Y%m%d`
     ZIP_NAME=$K_NAME-$MODEL-$K_VERSION-ARTER97-$ZIP_DATE.zip
