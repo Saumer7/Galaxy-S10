@@ -24,9 +24,9 @@ jobs:
         rm -fr toolchain
         git add .
         mkdir toolchain
-        git submodule add --branch proton210213 https://github.com/Saumer7/proton-clang toolchain/proton
+        git submodule add --branch arter97 https://github.com/Saumer7/samsung-exynos9820-toolchain/tree/arter97 toolchain/arter97
     - name: Kernel Build
-      run: echo 3 | ./ts-build-proton.sh
+      run: echo 3 | ./ts-build-arter97-aosp.sh
     - name: Upload Kernel Zip
       uses: actions/upload-artifact@v2
       with:
