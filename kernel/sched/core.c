@@ -791,17 +791,11 @@ static inline void dequeue_task(struct rq *rq, struct task_struct *p, int flags)
 
 void activate_task(struct rq *rq, struct task_struct *p, int flags)
 {
-	if (task_contributes_to_load(p))
-		rq->nr_uninterruptible--;
-
 	enqueue_task(rq, p, flags);
 }
 
 void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
 {
-	if (task_contributes_to_load(p))
-		rq->nr_uninterruptible++;
-
 	dequeue_task(rq, p, flags);
 }
 
@@ -1736,15 +1730,14 @@ ttwu_do_activate(struct rq *rq, struct task_struct *p, int wake_flags,
 	int en_flags = ENQUEUE_WAKEUP | ENQUEUE_NOCLOCK;
 
 	lockdep_assert_held(&rq->lock);
-
-#ifdef CONFIG_SMP
+	
 	if (p->sched_contributes_to_load)
 		rq->nr_uninterruptible--;
-
+	
+#ifdef CONFIG_SMP
 	if (wake_flags & WF_MIGRATED)
 		en_flags |= ENQUEUE_MIGRATED;
 	else
-#endif
 		if (p->in_iowait) {
 		delayacct_blkio_end(p);
 		atomic_dec(&task_rq(p)->nr_iowait);
@@ -2074,7 +2067,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags,
 	 * current.
 	 */
 	smp_rmb();
-	if (p->on_rq && ttwu_remote(p, wake_flags))
+	if (READ_ONCE(p->on_rq) && ttwu_remote(p, wake_flags))
 		goto stat;
 	
 	if (p->in_iowait) {
@@ -2099,8 +2092,20 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags,
 	 * Pairs with the full barrier implied in the UNLOCK+LOCK on rq->lock
 	 * from the consecutive calls to schedule(); the first switching to our
 	 * task, the second putting it to sleep.
+	 *
+	 * Form a control-dep-acquire with p->on_rq == 0 above, to ensure
+	 * schedule()'s deactivate_task() has 'happened' and p will no longer
+	 * care about it's own p->state. See the comment in __schedule().
 	 */
-	smp_rmb();
+	smp_acquire__after_ctrl_dep();
+
+	/*
+	 * We're doing the wakeup (@success == 1), they did a dequeue (p->on_rq
+	 * == 0), which means we need to do an enqueue, change p->state to
+	 * TASK_WAKING such that we can unlock p->pi_lock before doing the
+	 * enqueue, such as ttwu_queue_wakelist().
+	 */
+	p->state = TASK_WAKING;
 
 	/*
 	 * If the owning (remote) CPU is still in the middle of schedule() with
@@ -2114,9 +2119,6 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags,
 	smp_cond_load_acquire(&p->on_cpu, !VAL);
 
 	walt_try_to_wake_up(p);
-
-	p->sched_contributes_to_load = !!task_contributes_to_load(p);
-	p->state = TASK_WAKING;
 
 	if (p->in_iowait) {
 		delayacct_blkio_end(p);
@@ -3400,6 +3402,7 @@ static void __sched notrace __schedule(bool preempt)
 {
 	struct task_struct *prev, *next;
 	unsigned long *switch_count;
+	unsigned long prev_state;
 	struct rq_flags rf;
 	struct rq *rq;
 	int cpu;
@@ -3416,11 +3419,21 @@ static void __sched notrace __schedule(bool preempt)
 
 	local_irq_disable();
 	rcu_note_context_switch(preempt);
+	
+	/* See deactivate_task() below. */
+	prev_state = prev->state;
 
 	/*
 	 * Make sure that signal_pending_state()->signal_pending() below
 	 * can't be reordered with __set_current_state(TASK_INTERRUPTIBLE)
-	 * done by the caller to avoid the race with signal_wake_up().
+	 * done by the caller to avoid the race with signal_wake_up():
+	 *
+	 * __set_current_state(@state)		signal_wake_up()
+	 * schedule()				  set_tsk_thread_flag(p, TIF_SIGPENDING)
+	 *					  wake_up_state(p, state)
+	 *   LOCK rq->lock			    LOCK p->pi_state
+	 *   smp_mb__after_spinlock()		    smp_mb__after_spinlock()
+	 *     if (signal_pending_state())	    if (p->state & @state)
 	 */
 	rq_lock(rq, &rf);
 	smp_mb__after_spinlock();
@@ -3430,7 +3443,6 @@ static void __sched notrace __schedule(bool preempt)
 	update_rq_clock(rq);
 
 	switch_count = &prev->nivcsw;
-	
 	/*
 	* We must load prev->state once (task_struct::state is volatile), such
 	 * that:
@@ -3440,10 +3452,27 @@ static void __sched notrace __schedule(bool preempt)
 	*/
 	
 	prev_state = prev->state;
-	if (!preempt && prev->state) {
+	if (!preempt && prev_state && prev_state == prev->state) {
 		if (unlikely(signal_pending_state(prev->state, prev))) {
 			prev->state = TASK_RUNNING;
 		} else {
+			prev->sched_contributes_to_load =
+				(prev_state & TASK_UNINTERRUPTIBLE) &&
+				!(prev_state & TASK_NOLOAD) &&
+				!(prev->flags & PF_FROZEN);
+
+			if (prev->sched_contributes_to_load)
+				rq->nr_uninterruptible++;
+
+			/*
+			 * __schedule()			ttwu()
+			 *   prev_state = prev->state;	  if (READ_ONCE(p->on_rq) && ...)
+			 *   LOCK rq->lock		    goto out;
+			 *   smp_mb__after_spinlock();	  smp_acquire__after_ctrl_dep();
+			 *   p->on_rq = 0;		  p->state = TASK_WAKING;
+			 *
+			 * After this, schedule() must not care about p->state any more.
+			 */
 			deactivate_task(rq, prev, DEQUEUE_SLEEP | DEQUEUE_NOCLOCK);
 			prev->on_rq = 0;
 
