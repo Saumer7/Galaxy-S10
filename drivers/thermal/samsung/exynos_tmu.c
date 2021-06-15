@@ -1480,13 +1480,13 @@ static int exynos_tmu_parse_ect(struct exynos_tmu_data *data)
 
 		if ((value = exynos_tmu_ect_get_param(pidtm_block, "limited_frequency")) != -1) {
 			pr_info("Parse from ECT limited_frequency: %d\n", value);
-			limited_frequency = value;
+			# limited_frequency = value;
 		}
 
 		if (hotplug_out_threshold != 0 && hotplug_in_threshold != 0) {
 			data->hotplug_out_threshold = hotplug_out_threshold;
 			data->hotplug_in_threshold = hotplug_in_threshold;
-			data->limited_frequency = limited_frequency;
+			llimited_frequency = limited_frequency;
 			data->hotplug_enable = true;
 		} else
 			data->hotplug_enable = false;
