@@ -1,0 +1,34 @@
+aosp build on github..
+
+build-aosp : add proton210213 toolchain
+ts-build-[toolchain].sh : edited for aosp
+
+drivers/media/platform/exynos/fimc-is2/
+/include/fimc-is-metadata.h
+/fimc-is-v7_0_0/fimc-is-subdev-mcsp.c
+/sensor/module_framework/fimc-is-interface-sensor.c
+ : are replaced to cruel v3.10's to camerafix
+
+fs/f2fs/data.c
+ : delete #ifdef CONFIG_DDAR & if (!fscrypt_dd_can_merge_bio~~
+   to make kernel CONFIG_FSCRYPT_SDP unsetable
+  (https://github.com/RaySlash/android_kernel_samsung_exynos990/commit/3afda252ff12e837220785976814f92ad3a03a7b)
+
+kernel/power/qos.c
+ : delete /* dont let userspace impose restrictions on CPU idle levels */ and below.
+   to make kernel uperf compatiable.
+
+
+
+placebo :
+
+drivers/gpu/arm/b_r26p0/platform/exynos/gpu_custom_interface.c
+ : allow gpu undervolt to 0
+ : gpu max volt to 250000 (default 1000000)
+
+
+NOT placebo :
+
+drivers/cpufreq/exynos-acme.c
+ : cpu_undervolt = 800000 (default 25000)
+  too high value makes(≥1000000) lower cpu performance.
