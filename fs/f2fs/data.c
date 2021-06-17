@@ -636,12 +636,7 @@ next:
 
 	if (!try_merge_bio_encrypted(io->bio, dun, fscrypt_get_bio_cryptd(inode), enc))
 		__submit_merged_bio(io);
-#ifdef CONFIG_DDAR
-	/* DDAR support */
-	if (!fscrypt_dd_can_merge_bio(io->bio, fio->page->mapping))
-		__submit_merged_bio(io);
-#endif
-	
+
 alloc_new:
 	if (io->bio == NULL) {
 		if ((fio->type == DATA || fio->type == NODE) &&
@@ -1725,12 +1720,6 @@ submit_and_realloc:
 		dun = FSCRYPT_PG_DUN(inode, page);
 		enc = f2fs_inline_encrypted(inode, NULL);
 		if (!try_merge_bio_encrypted(bio, dun, fscrypt_get_bio_cryptd(inode), enc)) {
-			__submit_bio(F2FS_I_SB(inode), bio, DATA);
-			bio = NULL;
-		}
-	
-	/* DDAR changes */
-		if (!fscrypt_dd_can_merge_bio(bio, mapping)) {
 			__submit_bio(F2FS_I_SB(inode), bio, DATA);
 			bio = NULL;
 		}
