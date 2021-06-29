@@ -35,7 +35,7 @@
 #include "gpu_custom_interface.h"
 
 #ifdef CONFIG_SOC_EXYNOS9820
-#define GPU_MAX_VOLT		500000
+#define GPU_MAX_VOLT		125000
 #define GPU_MIN_VOLT		0
 #define GPU_VOLT_STEP		6250
 #else
