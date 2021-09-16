@@ -5,15 +5,15 @@
 
 LOG=compile_build.log
 RDIR=$(pwd)
-export K_VERSION="v2.6"
-export K_NAME="ThundeRStormS-Kernel"
-export K_BASE="FUE6"
-export ANDROID_VERSION=110000
-export PLATFORM_VERSION=11
-export ANDROID_MAJOR_VERSION=r
-export CURRENT_ANDROID_MAJOR_VERSION=r
-export BUILD_PLATFORM_VERSION=11
-ANDROID=OneUI-R
+export K_VERSION="v2.1"
+export K_NAME="ThundeRStormS-AOSP-Kernel"
+export K_BASE="FUCD"
+export ANDROID_VERSION=100000
+export PLATFORM_VERSION=10
+export ANDROID_MAJOR_VERSION=q
+export CURRENT_ANDROID_MAJOR_VERSION=q
+export BUILD_PLATFORM_VERSION=10
+ANDROID=AOSP-R
 
 export BUILD_CROSS_COMPILE=/home/nalas/kernel/AiO-S10-TS/toolchain/gcc-cfp/gcc-cfp-jopp-only/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 export CROSS_COMPILE=$BUILD_CROSS_COMPILE
@@ -32,8 +32,8 @@ DTB_PADDING=0
 MAIN()
 {
 (
-    ## COPY BACK CAMERA FILES FOR OneUI 3.x
-	cp -rf /home/nalas/kernel/AiO-S10-TS/builds/camera-oneui3/. /home/nalas/kernel/AiO-S10-TS/drivers/media/platform/exynos/fimc-is2
+#    ## COPY BACK CAMERA FILES FOR OneUI 3.x
+#	cp -rf /home/nalas/kernel/AiO-S10-TS/builds/camera-oneui3/. /home/nalas/kernel/AiO-S10-TS/drivers/media/platform/exynos/fimc-is2
 
 	START_TIME=`date +%T`
     if [ $MODEL = "G970F" ]; then
@@ -41,9 +41,9 @@ MAIN()
     elif [ $MODEL = "G970N" ]; then
     ./build mkimg model=G970N name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton +dtb
     elif [ $MODEL = "G973F" ]; then
-    ./build mkimg model=G973F name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton +dtb
+    ./build mkimg model=G973F name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton210213 +dtb
     elif [ $MODEL = "G973N" ]; then
-    ./build mkimg model=G973N name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton +dtb
+    ./build-aosp mkimg model=G973N name="$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION" toolchain=proton +dtb
     elif [ $MODEL = "G975F" ]; then
     ./build mkimg model=G975F name="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION" toolchain=proton +dtb
     elif [ $MODEL = "G975N" ]; then
@@ -69,7 +69,7 @@ MAIN()
 	echo "End compile time is $END_TIME"
 	echo ""
 	echo "Your flasheable release can be found in the builds folder with name :"
-	echo "$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION-`date +%Y-%m-%d`.img"
+	echo "$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION-`date +%Y-%m-%d`.img"
 	echo ""
 ) 2>&1 | tee -a ./$LOG
 }
@@ -78,7 +78,7 @@ BUILD_FLASHABLES()
 {
 	cd $RDIR/builds
 	mkdir temp2
-	cp -rf zip-OneUIR/common/. temp2
+	cp -rf zip-AOSP/common/. temp2
     cp -rf *.img temp2/
 	cd temp2
 	echo ""
@@ -100,9 +100,9 @@ RUN_PROGRAM()
     MAIN
     # BUILD_DTBO
     # BUILD_DTB
-    cp -f boot-$MODEL.img builds/$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION.img
-    cp -f $MODEL-dtb.img builds/zip-OneUIR/common/ts/dtb/$MODEL-dtb.img
-    cp -f $MODEL-dtbo.img builds/zip-OneUIR/common/ts/dtb/$MODEL-dtbo.img
+    cp -f boot-$MODEL.img builds/$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION.img
+    cp -f $MODEL-dtb.img builds/zip-AOSP/common/ts/dtb/$MODEL-dtb.img
+    cp -f $MODEL-dtbo.img builds/zip-AOSP/common/ts/dtb/$MODEL-dtbo.img
 }
 
 RUN_PROGRAM2()
@@ -110,9 +110,9 @@ RUN_PROGRAM2()
     MAIN
     # BUILD_DTBO
     # BUILD_DTB
-    cp -f boot-$MODEL.img builds/$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION.img
-    cp -f $MODEL-dtb.img builds/zip-OneUIR/common/ts/dtb/$MODEL-dtb.img
-    cp -f $MODEL-dtbo.img builds/zip-OneUIR/common/ts/dtb/$MODEL-dtbo.img
+    cp -f boot-$MODEL.img builds/$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION.img
+    cp -f $MODEL-dtb.img builds/zip-AOSP/common/ts/dtb/$MODEL-dtb.img
+    cp -f $MODEL-dtbo.img builds/zip-AOSP/common/ts/dtb/$MODEL-dtbo.img
 }
 
 BUILD_DTBO()
@@ -186,16 +186,16 @@ elif [ $prompt = "2" ]; then
     RUN_PROGRAM
     BUILD_FLASHABLES
 elif [ $prompt = "3" ]; then
-    MODEL=G973F
-    ZIP_DATE=`date +%Y%m%d`
-    # ZIP_NAME=$K_NAME-$MODEL-$ANDROID-$K_VERSION-PROTON-$ZIP_DATE.zip
-    export KERNEL_VERSION="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION"
-    echo "SM-G973F Selected"
-    RUN_PROGRAM
+#    MODEL=G973F
+#    ZIP_DATE=`date +%Y%m%d`
+#    # ZIP_NAME=$K_NAME-$MODEL-$ANDROID-$K_VERSION-PROTON-$ZIP_DATE.zip
+#    export KERNEL_VERSION="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION"
+#    echo "SM-G973F Selected"
+#    RUN_PROGRAM
     MODEL=G973N
     ZIP_DATE=`date +%Y%m%d`
-    ZIP_NAME=$K_NAME-$MODEL-F-$ANDROID-$K_VERSION-PROTON-$ZIP_DATE.zip
-    export KERNEL_VERSION="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION"
+    ZIP_NAME=$K_NAME-$MODEL-$K_VERSION-PROTON-$ZIP_DATE.zip
+    export KERNEL_VERSION="$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION"
     echo "SM-G973N Selected"
     RUN_PROGRAM
     BUILD_FLASHABLES
