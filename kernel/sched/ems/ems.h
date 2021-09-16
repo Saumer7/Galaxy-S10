@@ -22,7 +22,6 @@ extern int select_service_cpu(struct task_struct *p);
 extern int ontime_task_wakeup(struct task_struct *p, int sync);
 extern int select_perf_cpu(struct task_struct *p);
 extern int global_boosting(struct task_struct *p);
-extern int global_boosted(void);
 extern int select_energy_cpu(struct task_struct *p, int prev_cpu, int sd_flag, int sync);
 extern int select_best_cpu(struct task_struct *p, int prev_cpu, int sd_flag, int sync);
 extern unsigned int calculate_energy(struct task_struct *p, int target_cpu);
@@ -70,5 +69,7 @@ static inline struct task_struct *task_of(struct sched_entity *se)
 }
 
 struct list_head *lb_cfs_tasks(struct rq *rq, int sse);
+extern bool lbt_bring_overutilize(int cpu, struct task_struct *p);
+extern bool lbt_util_bring_overutilize(int cpu, unsigned long util);
 
 extern unsigned long freqvar_st_boost_vector(int cpu);

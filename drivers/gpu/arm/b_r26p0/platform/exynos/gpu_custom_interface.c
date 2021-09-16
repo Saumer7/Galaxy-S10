@@ -34,12 +34,14 @@
 #endif /* CONFIG_CPU_THERMAL_IPA */
 #include "gpu_custom_interface.h"
 
+#ifdef CONFIG_GPU_REG_VOLTAGE
 #ifdef CONFIG_SOC_EXYNOS9820
 #define GPU_MAX_VOLT		1000000
 #define GPU_MIN_VOLT		500000
 #define GPU_VOLT_STEP		6250
 #else
 #error "Please define gpu voltage ranges for current SoC."
+#endif
 #endif
 
 #ifdef CONFIG_MALI_RT_PM
@@ -227,7 +229,7 @@ static int gpu_get_asv_table(struct exynos_context *platform, char *buf, size_t 
 
 	cnt += snprintf(buf+cnt, buf_size-cnt, "GPU, vol, min, max, down_stay, mif, cpu0, cpu1\n");
 
-	for (i = gpu_dvfs_get_level(platform->gpu_max_clock); i <= gpu_dvfs_get_level(platform->gpu_min_clock); i++) {
+	for (i = gpu_dvfs_get_level(platform->gpu_max_clock_limit); i <= gpu_dvfs_get_level(platform->gpu_min_clock); i++) {
 		cnt += snprintf(buf+cnt, buf_size-cnt, "%d, %7d, %2d, %3d, %d, %7d, %7d, %7d\n",
 		platform->table[i].clock, platform->table[i].voltage, platform->table[i].min_threshold,
 		platform->table[i].max_threshold, platform->table[i].down_staycount, platform->table[i].mem_freq,
@@ -258,6 +260,7 @@ static ssize_t show_asv_table(struct device *dev, struct device_attribute *attr,
 	return ret;
 }
 
+#ifdef CONFIG_GPU_REG_VOLTAGE
 static ssize_t show_volt_table(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	struct exynos_context *platform = (struct exynos_context *)pkbdev->platform_context;
@@ -267,8 +270,8 @@ static ssize_t show_volt_table(struct device *dev, struct device_attribute *attr
 	if (!platform)
 		return -ENODEV;
 
-	max = gpu_dvfs_get_level(platform->gpu_max_clock);
-	min = gpu_dvfs_get_level(platform->gpu_min_clock);
+	max = gpu_dvfs_get_level(platform->gpu_max_clock_limit);
+	min = gpu_dvfs_get_level(platform->gpu_min_clock_limit);
 	pr_len = (size_t)((PAGE_SIZE - 2) / (min-max));
 
 	for (i = max; i <= min; i++) {
@@ -283,8 +286,8 @@ static ssize_t show_volt_table(struct device *dev, struct device_attribute *attr
 static ssize_t set_volt_table(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
 {
 	struct exynos_context *platform = (struct exynos_context *)pkbdev->platform_context;
-	int max = gpu_dvfs_get_level(platform->gpu_max_clock);
-	int min = gpu_dvfs_get_level(platform->gpu_min_clock);
+	int max = gpu_dvfs_get_level(platform->gpu_max_clock_limit);
+	int min = gpu_dvfs_get_level(platform->gpu_min_clock_limit);
 	int i, tokens, rest, target;
 	int t[min - max];
 	unsigned long flags;
@@ -324,6 +327,7 @@ static ssize_t set_volt_table(struct device *dev, struct device_attribute *attr,
 
 	return count;
 }
+#endif
 
 #ifdef CONFIG_MALI_DVFS
 static int gpu_get_dvfs_table(struct exynos_context *platform, char *buf, size_t buf_size)
@@ -336,7 +340,7 @@ static int gpu_get_dvfs_table(struct exynos_context *platform, char *buf, size_t
 	if (buf == NULL)
 		return 0;
 
-	for (i = gpu_dvfs_get_level(platform->gpu_max_clock); i <= gpu_dvfs_get_level(platform->gpu_min_clock); i++)
+	for (i = gpu_dvfs_get_level(platform->gpu_max_clock_limit); i <= gpu_dvfs_get_level(platform->gpu_min_clock); i++)
 		cnt += snprintf(buf+cnt, buf_size-cnt, " %d", platform->table[i].clock);
 
 	cnt += snprintf(buf+cnt, buf_size-cnt, "\n");
@@ -382,7 +386,7 @@ static ssize_t show_time_in_state(struct device *dev, struct device_attribute *a
 
 	gpu_dvfs_update_time_in_state(gpu_control_is_power_on(pkbdev) * platform->cur_clock);
 
-	for (i = gpu_dvfs_get_level(platform->gpu_min_clock); i >= gpu_dvfs_get_level(platform->gpu_max_clock); i--) {
+	for (i = gpu_dvfs_get_level(platform->gpu_min_clock_limit); i >= gpu_dvfs_get_level(platform->gpu_max_clock); i--) {
 		ret += snprintf(buf+ret, PAGE_SIZE-ret, "%d %llu\n",
 				platform->table[i].clock,
 				platform->table[i].time);
@@ -570,15 +574,14 @@ static ssize_t set_gpu_custom_max_clock(struct device *dev, struct device_attrib
 		return -ENOENT;
 	}
 
+	platform->gpu_max_clock = gpu_max_clock;
+	platform->user_max_lock_input = gpu_max_clock;
+	gpu_dvfs_clock_lock(GPU_DVFS_MAX_UNLOCK, SYSFS_LOCK, 0);
+
 	if ((gpu_max_clock < platform->gpu_min_clock_limit) || (gpu_max_clock > platform->gpu_max_clock_limit)) {
 		GPU_LOG(DVFS_WARNING, DUMMY, 0u, 0u, "%s: out of range (%d)\n", __func__, gpu_max_clock);
 		return -ENOENT;
 	}
-
-	platform->gpu_max_clock = gpu_max_clock;
-	platform->user_max_lock_input = 0;
-	gpu_dvfs_clock_lock(GPU_DVFS_MAX_UNLOCK, SYSFS_LOCK, 0);
-
 
 	return count;
 }
@@ -619,12 +622,13 @@ static ssize_t set_gpu_custom_min_clock(struct device *dev, struct device_attrib
 		return -ENOENT;
 	}
 
+	platform->gpu_min_clock = gpu_min_clock;
+	platform->user_min_lock_input = gpu_min_clock;
+
 	if ((gpu_min_clock < platform->gpu_min_clock_limit) || (gpu_min_clock > platform->gpu_max_clock_limit)) {
 		GPU_LOG(DVFS_WARNING, DUMMY, 0u, 0u, "%s: out of range (%d)\n", __func__, gpu_min_clock);
 		return -ENOENT;
 	}
-
-	platform->gpu_min_clock = gpu_min_clock;
 
 	return count;
 }
@@ -998,6 +1002,7 @@ static ssize_t show_max_lock_dvfs(struct device *dev, struct device_attribute *a
 	return ret;
 }
 
+#define SUSTAINABLE_FREQ 377000 // KHz
 static ssize_t set_max_lock_dvfs(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
 {
 	int ret, clock = 0;
@@ -1017,6 +1022,9 @@ static ssize_t set_max_lock_dvfs(struct device *dev, struct device_attribute *at
 		}
 
 		clock = platform->gpu_max_clock;
+
+		if (clock < SUSTAINABLE_FREQ)
+			clock = SUSTAINABLE_FREQ;
 
 		platform->user_max_lock_input = clock;
 
@@ -1097,8 +1105,8 @@ static ssize_t set_min_lock_dvfs(struct device *dev, struct device_attribute *at
 			return -ENOENT;
 		}
 
-		if (clock > platform->gpu_max_clock_limit)
-			clock = platform->gpu_max_clock_limit;
+		if (clock > platform->gpu_max_clock)
+			clock = platform->gpu_max_clock;
 
 		if (clock == platform->gpu_min_clock)
 			gpu_dvfs_clock_lock(GPU_DVFS_MIN_UNLOCK, SYSFS_LOCK, 0);
@@ -1120,7 +1128,7 @@ static ssize_t show_down_staycount(struct device *dev, struct device_attribute *
 		return -ENODEV;
 
 	spin_lock_irqsave(&platform->gpu_dvfs_spinlock, flags);
-	for (i = gpu_dvfs_get_level(platform->gpu_max_clock); i <= gpu_dvfs_get_level(platform->gpu_min_clock); i++)
+	for (i = gpu_dvfs_get_level(platform->gpu_max_clock_limit); i <= gpu_dvfs_get_level(platform->gpu_min_clock); i++)
 		ret += snprintf(buf+ret, PAGE_SIZE-ret, "Clock %d - %d\n",
 			platform->table[i].clock, platform->table[i].down_staycount);
 	spin_unlock_irqrestore(&platform->gpu_dvfs_spinlock, flags);
@@ -1248,8 +1256,8 @@ static ssize_t set_highspeed_clock(struct device *dev, struct device_attribute *
 		return -ENOENT;
 	}
 
-	if (highspeed_clock > platform->gpu_max_clock_limit)
-		highspeed_clock = platform->gpu_max_clock_limit;
+	if (highspeed_clock > platform->gpu_max_clock)
+		highspeed_clock = platform->gpu_max_clock;
 
 	spin_lock_irqsave(&platform->gpu_dvfs_spinlock, flags);
 	platform->interactive.highspeed_clock = highspeed_clock;
@@ -1890,7 +1898,9 @@ DEVICE_ATTR(clock, S_IRUGO|S_IWUSR, show_clock, set_clock);
 DEVICE_ATTR(vol, S_IRUGO, show_vol, NULL);
 DEVICE_ATTR(power_state, S_IRUGO, show_power_state, NULL);
 DEVICE_ATTR(asv_table, S_IRUGO, show_asv_table, NULL);
+#ifdef CONFIG_GPU_REG_VOLTAGE
 DEVICE_ATTR(volt_table, S_IRUGO|S_IWUSR, show_volt_table, set_volt_table);
+#endif
 DEVICE_ATTR(dvfs_table, S_IRUGO, show_dvfs_table, NULL);
 DEVICE_ATTR(time_in_state, S_IRUGO|S_IWUSR, show_time_in_state, set_time_in_state);
 DEVICE_ATTR(utilization, S_IRUGO, show_utilization, NULL);
@@ -2050,6 +2060,9 @@ static ssize_t set_kernel_sysfs_max_lock_dvfs(struct kobject *kobj, struct kobj_
 			GPU_LOG(DVFS_WARNING, DUMMY, 0u, 0u, "%s: invalid value\n", __func__);
 			return -ENOENT;
 		}
+
+		if (clock < SUSTAINABLE_FREQ)
+			clock = SUSTAINABLE_FREQ;
 
 		platform->user_max_lock_input = clock;
 
@@ -2602,12 +2615,12 @@ int gpu_create_sysfs_file(struct device *dev)
 		GPU_LOG(DVFS_ERROR, DUMMY, 0u, 0u, "couldn't create sysfs file [asv_table]\n");
 		goto out;
 	}
-
+#ifdef CONFIG_GPU_REG_VOLTAGE
 	if (device_create_file(dev, &dev_attr_volt_table)) {
 		GPU_LOG(DVFS_ERROR, DUMMY, 0u, 0u, "couldn't create sysfs file [volt_table]\n");
 		goto out;
 	}
-
+#endif
 	if (device_create_file(dev, &dev_attr_dvfs_table)) {
 		GPU_LOG(DVFS_ERROR, DUMMY, 0u, 0u, "couldn't create sysfs file [dvfs_table]\n");
 		goto out;
@@ -2825,7 +2838,9 @@ void gpu_remove_sysfs_file(struct device *dev)
 	device_remove_file(dev, &dev_attr_vol);
 	device_remove_file(dev, &dev_attr_power_state);
 	device_remove_file(dev, &dev_attr_asv_table);
+#ifdef CONFIG_GPU_REG_VOLTAGE
 	device_remove_file(dev, &dev_attr_volt_table);
+#endif
 	device_remove_file(dev, &dev_attr_dvfs_table);
 	device_remove_file(dev, &dev_attr_time_in_state);
 	device_remove_file(dev, &dev_attr_utilization);

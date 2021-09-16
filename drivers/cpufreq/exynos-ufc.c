@@ -24,8 +24,8 @@
 
 #include "exynos-acme.h"
 
-
-#define SUSTAINABLE_FREQ 1820000
+#define SUSTAINABLE_FREQ_MID 1898000
+#define SUSTAINABLE_FREQ_BIG 1820000
 /*********************************************************************
  *                          SYSFS INTERFACES                         *
  *********************************************************************/
@@ -575,12 +575,20 @@ static ssize_t store_cpufreq_max_limit(struct kobject *kobj, struct kobj_attribu
 					const char *buf, size_t count)
 {
 	int input;
+    int cpu;
+    struct exynos_cpufreq_domain *domain;
 
 	if (!sscanf(buf, "%8d", &input))
 		return -EINVAL;
 
-	if (input < SUSTAINABLE_FREQ && input != -1)
-		input = SUSTAINABLE_FREQ;
+	    /* Set Sustanable Freq on cluster Mid.big  - XDA@nalas */
+	    if (domain->id == 1) {
+	            if (input < SUSTAINABLE_FREQ_MID && input != -1)
+		        input = SUSTAINABLE_FREQ_MID;
+	    } else if (domain->id == 2) {
+	            if (input < SUSTAINABLE_FREQ_BIG && input != -1)
+		        input = SUSTAINABLE_FREQ_BIG;
+	    }
 
 	last_max_limit = input;
 	cpufreq_max_limit_update(input);
