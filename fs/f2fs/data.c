@@ -638,12 +638,13 @@ next:
 
 	if (!try_merge_bio_encrypted(io->bio, dun, fscrypt_get_bio_cryptd(inode), enc))
 		__submit_merged_bio(io);
+/*
 #ifdef CONFIG_DDAR
-	/* DDAR support */
+	/ * DDAR support * /
 	if (!fscrypt_dd_can_merge_bio(io->bio, fio->page->mapping))
 		__submit_merged_bio(io);
 #endif
-
+*/
 alloc_new:
 	if (io->bio == NULL) {
 		if ((fio->type == DATA || fio->type == NODE) &&
@@ -1731,12 +1732,12 @@ submit_and_realloc:
 			bio = NULL;
 		}
 
-		/* DDAR changes */
+/*		/ * DDAR changes * /
 		if (!fscrypt_dd_can_merge_bio(bio, mapping)) {
 			__submit_bio(F2FS_I_SB(inode), bio, DATA);
 			bio = NULL;
 		}
-
+*/
 		if (bio == NULL) {
 			bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
 					is_readahead ? REQ_RAHEAD : 0);
@@ -1828,12 +1829,12 @@ static int encrypt_one_page(struct f2fs_io_info *fio)
 retry_encrypt:
 	if (fscrypt_inline_encrypted(inode))
 		return 0;
-
+/*
 #ifdef CONFIG_DDAR
 	if (fscrypt_dd_encrypted_inode(inode))
 		return 0;
 #endif
-
+*/
 	fio->encrypted_page = fscrypt_encrypt_page(inode, fio->page,
 			PAGE_SIZE, 0, fio->page->index, gfp_flags);
 	if (IS_ERR(fio->encrypted_page)) {
