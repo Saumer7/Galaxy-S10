@@ -24,7 +24,7 @@ jobs:
         rm -fr toolchain
         git add .
         mkdir toolchain
-        git submodule add --branch proton210213 https://github.com/Saumer7/samsung-exynos9820-toolchain toolchain/proton210213
+        git submodule add --branch proton210213 https://github.com/Saumer7/samsung-exynos9820-toolchain toolchain/proton
     - name: Make scripts/fetch-latest-wireguard.sh executable
       run: chmod +x ./scripts/fetch-latest-wireguard.sh
     - name: Kernel Build
