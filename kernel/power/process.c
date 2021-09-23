@@ -130,13 +130,13 @@ static int try_to_freeze_tasks(bool user_only)
 			if (p != current && !freezer_should_skip(p)
 			    && freezing(p) && !frozen(p)) {
 				sched_show_task(p);
-/*!dd				sec_debug_set_extra_info_backtrace_task(p);
-				sec_debug_set_extra_info_unfz(p->comm);*/
+				sec_debug_set_extra_info_backtrace_task(p);
+				sec_debug_set_extra_info_unfz(p->comm);
 			}
 		}
 		read_unlock(&tasklist_lock);
 
-/*!dd		sec_debug_set_extra_info_unfz(sys_state[system_state]);*/
+		sec_debug_set_extra_info_unfz(sys_state[system_state]);
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
 		panic("fail to freeze tasks");
 #endif
