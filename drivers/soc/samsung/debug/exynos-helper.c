@@ -260,7 +260,7 @@ static void exynos_post_panic_entry(void *val)
 	flush_cache_all();
 
 #ifdef CONFIG_EXYNOS_SDM
-	if (dbg_snapshot_is_scratch() && sec_debug_enter_upload())
+	if (dbg_snapshot_is_scratch()/*!dd && sec_debug_enter_upload()*/)
 		exynos_sdm_dump_secure_region();
 #endif
 }
