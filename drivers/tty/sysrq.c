@@ -148,7 +148,7 @@ static void sysrq_handle_crash(int key)
 	panic_on_oops = 1;	/* force panic */
 	wmb();
 
-	sec_debug_set_sysrq_crash(current);
+/*!dd	sec_debug_set_sysrq_crash(current);*/
 
 	*killer = 1;
 }
