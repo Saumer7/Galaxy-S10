@@ -35,11 +35,11 @@ static int sec_sdcard_ramdump(const char *val, const struct kernel_param *kp)
 	if (!initialized)
 		return 0;
 
-	if (dump_sink == ENABLE_SDCARD_RAMDUMP) {
+/*!dd	if (dump_sink == ENABLE_SDCARD_RAMDUMP) {
 		sec_set_reboot_magic(MAGIC_SDR_FOR_MINFORM, OFFSET_SDR_FOR_MINFORM, MASK_SDR_FOR_MINFORM);
 	} else if (dump_sink == ENABLE_STORAGE_RAMDUMP) {
 		sec_set_reboot_magic(MAGIC_STR_FOR_MINFORM, OFFSET_SDR_FOR_MINFORM, MASK_SDR_FOR_MINFORM);
-	}
+	}*/
 	return 0;
 }
 
@@ -263,11 +263,11 @@ static int __init sec_dump_sink_init(void)
 	}
 	pr_info("%s: success to create proc entry\n", __func__);
 	initialized = 1;
-	if (dump_sink == ENABLE_SDCARD_RAMDUMP) {
+/*!dd	if (dump_sink == ENABLE_SDCARD_RAMDUMP) {
 		sec_set_reboot_magic(MAGIC_SDR_FOR_MINFORM, OFFSET_SDR_FOR_MINFORM, MASK_SDR_FOR_MINFORM);
 	} else if (dump_sink == ENABLE_STORAGE_RAMDUMP) {
 		sec_set_reboot_magic(MAGIC_STR_FOR_MINFORM, OFFSET_SDR_FOR_MINFORM, MASK_SDR_FOR_MINFORM);
-	}
+	}*/
 	pr_info("%s: dump_sink set to 0x%x\n", __func__, dump_sink);
 
 	return 0;
