@@ -997,8 +997,8 @@ static int parse_options(struct super_block *sb, char *options)
 /*!dd		if (!strcmp(volume_name, "data")) {
 			keypress_callback_sb = sb;
 			keypress_callback_fn = f2fs_keypress_callback_fn;
-		}
-	}*/
+		}*/
+	}
 
 	return 0;
 }
