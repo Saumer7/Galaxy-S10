@@ -568,7 +568,7 @@ static void exynos_sci_err_parse(u32 reg_idx, u64 reg)
 #define ERR_INJ_DONE		(1 << 31)
 #define ERR_NS			(1 << 8)
 
-extern void exynos_dump_common_cpu_reg(void);
+/*!ddextern void exynos_dump_common_cpu_reg(void);*/
 
 void sci_error_dump(void)
 {
@@ -593,7 +593,7 @@ void sci_error_dump(void)
 	sci_ns = (ERR_NS & sci_reg_hi) >> 8;
 	sci_err_inj = (ERR_INJ_DONE & sci_reg_hi) >> 31;
 	pr_info("SCI_ErrAddr : %016lx (NS:%u, ERR_INJ:%u)\n", sci_reg_addr, sci_ns, sci_err_inj);
-	exynos_dump_common_cpu_reg();
+/*!dd	exynos_dump_common_cpu_reg();*/
 	pr_info("============================================================\n");
 }
 EXPORT_SYMBOL(sci_error_dump);
