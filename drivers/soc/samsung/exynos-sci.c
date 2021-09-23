@@ -560,7 +560,7 @@ static void exynos_sci_err_parse(u32 reg_idx, u64 reg)
 		return;
 	}
 
-	exynos_err_parse(reg_idx, reg, &exynos_sci_err_table[reg_idx]);
+/*!dd	exynos_err_parse(reg_idx, reg, &exynos_sci_err_table[reg_idx]);*/
 }
 
 #define MSB_MASKING		(0x0000FF0000000000)
