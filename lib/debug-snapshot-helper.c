@@ -644,5 +644,5 @@ void __init dbg_snapshot_init_helper(void)
 	dss_soc_ops = &dss_soc_dummy_ops;
 
 	/* hardlockup_detector function should be called before secondary booting */
-	dbg_snapshot_soc_helper_init();
+/*!dd	dbg_snapshot_soc_helper_init();*/
 }
