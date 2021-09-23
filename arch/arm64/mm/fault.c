@@ -305,7 +305,7 @@ static void __do_kernel_fault(unsigned long addr, unsigned int esr,
 		return;
 	}
 
-	adv_tracer_arraydump();
+/*!dd	adv_tracer_arraydump();*/
 	/*
 	 * No handler, we'll have to terminate things with extreme prejudice.
 	 */
@@ -896,8 +896,8 @@ asmlinkage void __exception do_sp_pc_abort(unsigned long addr,
 			arm64_apply_bp_hardening();
 
 		local_irq_enable();
-	} else {
-		adv_tracer_arraydump();
+/*!dd	} else {
+		adv_tracer_arraydump();*/
 	}
 
 	if (!user_mode(regs) || (unhandled_signal(tsk, SIGBUS) && show_unhandled_signals_ratelimited()))
