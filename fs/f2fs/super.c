@@ -996,9 +996,9 @@ static int parse_options(struct super_block *sb, char *options)
 					UTF16_LITTLE_ENDIAN, volume_name, MAX_VOLUME_NAME);
 /*!dd		if (!strcmp(volume_name, "data")) {
 			keypress_callback_sb = sb;
-			keypress_callback_fn = f2fs_keypress_callback_fn;*/
+			keypress_callback_fn = f2fs_keypress_callback_fn;
 		}
-	}
+	}*/
 
 	return 0;
 }
