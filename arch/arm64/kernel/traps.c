@@ -496,8 +496,8 @@ void arm64_notify_segfault(struct pt_regs *regs, unsigned long addr)
 
 asmlinkage void __exception do_undefinstr(struct pt_regs *regs, unsigned int esr)
 {
-	if (!user_mode(regs))
-		adv_tracer_arraydump();
+/*!dd	if (!user_mode(regs))
+		adv_tracer_arraydump();*/
 
 #ifdef CONFIG_SEC_DEBUG_EXTRA_INFO
 	if (!user_mode(regs)) {
@@ -744,8 +744,8 @@ asmlinkage void bad_mode(struct pt_regs *regs, int reason, unsigned int esr)
 {
 	console_verbose();
 
-	if (!user_mode(regs))
-		adv_tracer_arraydump();
+/*!dd	if (!user_mode(regs))
+		adv_tracer_arraydump();*/
 
 	pr_auto(ASL1,
 		"Bad mode in %s handler detected on CPU%d, code 0x%08x -- %s\n",
