@@ -669,9 +669,9 @@ int pm_suspend(suspend_state_t state)
 
 	pr_info("suspend entry (%s)\n", mem_sleep_labels[state]);
 
-	sec_debug_set_task_in_pm_suspend((uint64_t)current);
+/*!dd	sec_debug_set_task_in_pm_suspend((uint64_t)current);*/
 	error = enter_state(state);
-	sec_debug_set_task_in_pm_suspend(0);
+/*!dd	sec_debug_set_task_in_pm_suspend(0);*/
 
 	if (error) {
 		suspend_stats.fail++;
