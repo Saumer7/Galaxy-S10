@@ -827,8 +827,8 @@ asmlinkage void __exception do_mem_abort(unsigned long addr, unsigned int esr,
 	if (!inf->fn(addr, esr, regs))
 		return;
 
-	if (!user_mode(regs))
-		adv_tracer_arraydump();
+/*!dd	if (!user_mode(regs))
+		adv_tracer_arraydump();*/
 
 	/* Synchronous external abort only */
 	if (!user_mode(regs) || (esr & 63) == 0x10) {
