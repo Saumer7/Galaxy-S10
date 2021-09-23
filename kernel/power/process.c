@@ -60,8 +60,8 @@ static int try_to_freeze_tasks(bool user_only)
 	if (!user_only)
 		freeze_workqueues_begin();
 
-	sec_debug_set_unfrozen_task((uint64_t)NULL);
-	sec_debug_set_unfrozen_task_count((uint64_t)0);
+/*!dd	sec_debug_set_unfrozen_task((uint64_t)NULL);
+	sec_debug_set_unfrozen_task_count((uint64_t)0);*/
 
 	while (true) {
 		todo = 0;
@@ -72,10 +72,10 @@ static int try_to_freeze_tasks(bool user_only)
 
 			if (!freezer_should_skip(p)) {
 				todo++;
-				sec_debug_set_unfrozen_task((uint64_t)p);
+/*!dd				sec_debug_set_unfrozen_task((uint64_t)p);*/
 			}
 		}
-		sec_debug_set_unfrozen_task_count((uint64_t)todo);
+/*!dd		sec_debug_set_unfrozen_task_count((uint64_t)todo);*/
 		
 		read_unlock(&tasklist_lock);
 
@@ -130,13 +130,13 @@ static int try_to_freeze_tasks(bool user_only)
 			if (p != current && !freezer_should_skip(p)
 			    && freezing(p) && !frozen(p)) {
 				sched_show_task(p);
-				sec_debug_set_extra_info_backtrace_task(p);
-				sec_debug_set_extra_info_unfz(p->comm);
+/*!dd				sec_debug_set_extra_info_backtrace_task(p);
+				sec_debug_set_extra_info_unfz(p->comm);*/
 			}
 		}
 		read_unlock(&tasklist_lock);
 
-		sec_debug_set_extra_info_unfz(sys_state[system_state]);
+/*!dd		sec_debug_set_extra_info_unfz(sys_state[system_state]);*/
 #if !defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
 		panic("fail to freeze tasks");
 #endif
@@ -145,8 +145,8 @@ static int try_to_freeze_tasks(bool user_only)
 			elapsed_msecs % 1000);
 	}
 
-	sec_debug_set_unfrozen_task((uint64_t)NULL);
-	sec_debug_set_unfrozen_task_count((uint64_t)0);
+/*!dd	sec_debug_set_unfrozen_task((uint64_t)NULL);
+	sec_debug_set_unfrozen_task_count((uint64_t)0);*/
 
 	return todo ? -EBUSY : 0;
 }
