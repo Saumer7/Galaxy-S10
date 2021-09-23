@@ -16,7 +16,7 @@
 #include <linux/syscalls.h>
 #include <linux/syscore_ops.h>
 #include <linux/uaccess.h>
-#include <linux/sec_debug.h>
+/*#include <linux/sec_debug.h>*/
 
 /*
  * this indicates whether you can reboot with ctrl-alt-del: the default is yes
