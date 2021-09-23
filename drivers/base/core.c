@@ -2920,13 +2920,13 @@ void device_shutdown(void)
 	 * Beware that device unplug events may also start pulling
 	 * devices offline, even as the system is shutting down.
 	 */
-	sec_debug_set_task_in_dev_shutdown((uint64_t)current);
+/*!dd	sec_debug_set_task_in_dev_shutdown((uint64_t)current);*/
 
 	while (!list_empty(&devices_kset->list)) {
 		dev = list_entry(devices_kset->list.prev, struct device,
 				kobj.entry);
 
-		sec_debug_set_shutdown_device(__func__, dev_name(dev));
+/*!dd		sec_debug_set_shutdown_device(__func__, dev_name(dev));*/
 		/*
 		 * hold reference count of device's parent to
 		 * prevent it from being freed because parent's
@@ -2957,7 +2957,7 @@ void device_shutdown(void)
 			before = local_clock();
 			dev->class->shutdown_pre(dev);
 			after = local_clock();
-			sec_debug_set_device_shutdown_timeinfo(before, after, after - before, (u64)get_cls_shutdown_func(dev));
+/*!dd			sec_debug_set_device_shutdown_timeinfo(before, after, after - before, (u64)get_cls_shutdown_func(dev));*/
 		}
 
 		if (dev->bus && dev->bus->shutdown) {
@@ -2967,7 +2967,7 @@ void device_shutdown(void)
 			before = local_clock();
 			dev->bus->shutdown(dev);
 			after = local_clock();
-			sec_debug_set_device_shutdown_timeinfo(before, after, after - before, (u64)get_bus_shutdown_func(dev));
+/*!dd			sec_debug_set_device_shutdown_timeinfo(before, after, after - before, (u64)get_bus_shutdown_func(dev));*/
 		} else if (dev->driver && dev->driver->shutdown) {
 			if (initcall_debug)
 				dev_info(dev, "shutdown\n");
@@ -2975,7 +2975,7 @@ void device_shutdown(void)
 			before = local_clock();
 			dev->driver->shutdown(dev);
 			after = local_clock();
-			sec_debug_set_device_shutdown_timeinfo(before, after, after - before, (u64)get_drv_shutdown_func(dev));
+/*!dd			sec_debug_set_device_shutdown_timeinfo(before, after, after - before, (u64)get_drv_shutdown_func(dev));*/
 		}
 
 		device_unlock(dev);
@@ -2988,8 +2988,8 @@ void device_shutdown(void)
 		spin_lock(&devices_kset->list_lock);
 	}
 
-	sec_debug_set_shutdown_device(NULL, NULL);
-	sec_debug_set_task_in_dev_shutdown(0);
+/*!dd	sec_debug_set_shutdown_device(NULL, NULL);
+	sec_debug_set_task_in_dev_shutdown(0);*/
 	spin_unlock(&devices_kset->list_lock);
 }
 
