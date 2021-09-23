@@ -462,11 +462,11 @@ static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
 }
 #endif
 
-static int f2fs_keypress_callback_fn(struct super_block *sb)
+/*!ddstatic int f2fs_keypress_callback_fn(struct super_block *sb)
 {
 	return blkdev_issue_flush(sb->s_bdev, GFP_KERNEL, NULL);
 }
-
+*/
 static int parse_options(struct super_block *sb, char *options)
 {
 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
@@ -994,9 +994,9 @@ static int parse_options(struct super_block *sb, char *options)
 
 		utf16s_to_utf8s(sbi->raw_super->volume_name, MAX_VOLUME_NAME,
 					UTF16_LITTLE_ENDIAN, volume_name, MAX_VOLUME_NAME);
-		if (!strcmp(volume_name, "data")) {
+/*!dd		if (!strcmp(volume_name, "data")) {
 			keypress_callback_sb = sb;
-			keypress_callback_fn = f2fs_keypress_callback_fn;
+			keypress_callback_fn = f2fs_keypress_callback_fn;*/
 		}
 	}
 
