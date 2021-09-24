@@ -2684,7 +2684,7 @@ _dhd_set_mac_address(dhd_info_t *dhd, int ifidx, uint8 *addr)
 int dhd_update_rand_mac_addr(dhd_pub_t *dhd)
 {
 	struct ether_addr mac_addr;
-	dhd_generate_rand_mac_addr(&mac_addr);
+/*!dd	dhd_generate_rand_mac_addr(&mac_addr);*/
 	if (_dhd_set_mac_address(dhd->info, 0, mac_addr.octet) != 0) {
 		DHD_ERROR(("randmac setting failed\n"));
 #ifdef STA_RANDMAC_ENFORCED
