@@ -19929,6 +19929,7 @@ dhd_log_dump_init(dhd_pub_t *dhd)
 	/* now adjust the preserve log flush size based on the
 	* kernel printk log buffer size
 	*/
+/*!dd this ifdef
 #ifdef CONFIG_LOG_BUF_SHIFT
 	DHD_ERROR(("%s: kernel log buf size = %uKB; logdump_prsrv_tailsize = %uKB;"
 		" limit prsrv tail size to = %uKB\n",
@@ -22597,15 +22598,16 @@ dhd_get_roam_evt(dhd_pub_t *dhdp)
 	return NULL;
 #endif /* DHD_PUB_ROAM_EVT */
 }
-
+/*!dd
 void
 dhd_generate_rand_mac_addr(struct ether_addr *ea_addr)
 {
 	RANDOM_BYTES(ea_addr->octet, ETHER_ADDR_LEN);
 	/* restore mcast and local admin bits to 0 and 1 */
-	ETHER_SET_UNICAST(ea_addr->octet);
+/*!dd	ETHER_SET_UNICAST(ea_addr->octet);
 	ETHER_SET_LOCALADDR(ea_addr->octet);
 	DHD_ERROR(("%s:generated new MAC="MACDBG" \n",
 		__FUNCTION__, MAC2STRDBG(ea_addr->octet)));
 	return;
 }
+*/
