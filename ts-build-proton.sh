@@ -8,12 +8,12 @@ RDIR=$(pwd)
 export K_VERSION="v2.6"
 export K_NAME="ThundeRStormS-AOSP-Kernel"
 export K_BASE="FUE6"
-export ANDROID_VERSION=100000
-export PLATFORM_VERSION=10
-export ANDROID_MAJOR_VERSION=q
-export CURRENT_ANDROID_MAJOR_VERSION=q
-export BUILD_PLATFORM_VERSION=10
-ANDROID=AOSP-R
+export ANDROID_VERSION=110000
+export PLATFORM_VERSION=11
+export ANDROID_MAJOR_VERSION=r
+export CURRENT_ANDROID_MAJOR_VERSION=r
+export BUILD_PLATFORM_VERSION=11
+ANDROID=OneUI-R
 
 export BUILD_CROSS_COMPILE=/home/nalas/kernel/AiO-S10-TS/toolchain/gcc-cfp/gcc-cfp-jopp-only/aarch64-linux-android-4.9/bin/aarch64-linux-android-
 export CROSS_COMPILE=$BUILD_CROSS_COMPILE
@@ -69,7 +69,7 @@ MAIN()
 	echo "End compile time is $END_TIME"
 	echo ""
 	echo "Your flasheable release can be found in the builds folder with name :"
-	echo "$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION-`date +%Y-%m-%d`.img"
+	echo "$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION-`date +%Y-%m-%d`.img"
 	echo ""
 ) 2>&1 | tee -a ./$LOG
 }
@@ -78,7 +78,7 @@ BUILD_FLASHABLES()
 {
 	cd $RDIR/builds
 	mkdir temp2
-	cp -rf zip-AOSP/common/. temp2
+	cp -rf zip-OneUI/common/. temp2
     cp -rf *.img temp2/
 	cd temp2
 	echo ""
@@ -100,9 +100,9 @@ RUN_PROGRAM()
     MAIN
     # BUILD_DTBO
     # BUILD_DTB
-    cp -f boot-$MODEL.img builds/$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION.img
-    cp -f $MODEL-dtb.img builds/zip-AOSP/common/ts/dtb/$MODEL-dtb.img
-    cp -f $MODEL-dtbo.img builds/zip-AOSP/common/ts/dtb/$MODEL-dtbo.img
+    cp -f boot-$MODEL.img builds/$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION.img
+    cp -f $MODEL-dtb.img builds/zip-OneUIR/common/ts/dtb/$MODEL-dtb.img
+    cp -f $MODEL-dtbo.img builds/zip-OneUIR/common/ts/dtb/$MODEL-dtbo.img
 }
 
 RUN_PROGRAM2()
@@ -194,8 +194,8 @@ elif [ $prompt = "3" ]; then
 #    RUN_PROGRAM
     MODEL=G973N
     ZIP_DATE=`date +%Y%m%d`
-    ZIP_NAME=$K_NAME-$MODEL-$K_VERSION-PROTON-$ZIP_DATE.zip
-    export KERNEL_VERSION="$K_NAME-$K_BASE-AOSP-$MODEL-$K_VERSION"
+    ZIP_NAME=$K_NAME-$MODEL-F-$ANDROID-$K_VERSION-PROTON-$ZIP_DATE.zip
+    export KERNEL_VERSION="$K_NAME-$K_BASE-$ANDROID-$MODEL-$K_VERSION"
     echo "SM-G973N Selected"
     RUN_PROGRAM
     BUILD_FLASHABLES
